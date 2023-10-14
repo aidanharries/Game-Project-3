@@ -1,4 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿// ---------------------------------------------------------------------------
+// Proj3 - Laser Class
+// Author: Aidan Harries
+// Date: 10/13/23
+// Description: Represents a laser projectile in the game. The class handles 
+// the laser's movement, texture loading, and rendering. The laser moves at a 
+// constant speed and can be rotated to aim at a certain direction.
+// ---------------------------------------------------------------------------
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
@@ -7,7 +16,7 @@ namespace Proj3
     public class Laser
     {
         // Constant speed at which the laser moves.
-        const float SPEED = 1000;
+        private const float SPEED = 1000;
 
         // Public fields for laser's position, direction of movement, and rotation angle.
         public Vector2 position;
@@ -15,7 +24,7 @@ namespace Proj3
         public float angle;
 
         // Graphical representation of the laser.
-        Texture2D texture;
+        private Texture2D _texture;
 
         /// <summary>
         /// Initializes a new instance of the Laser class with a given starting position, direction, and angle.
@@ -36,7 +45,7 @@ namespace Proj3
         /// <param name="content">The content manager used to load game assets.</param>
         public void LoadContent(ContentManager content)
         {
-            texture = content.Load<Texture2D>("laser");
+            _texture = content.Load<Texture2D>("laser");
         }
 
         /// <summary>
@@ -57,7 +66,7 @@ namespace Proj3
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             // Draws the laser texture to the screen with a specified position, rotation, and scale.
-            spriteBatch.Draw(texture, position, null, Color.White, angle, new Vector2(texture.Width / 2, texture.Height / 2), 1.5f, SpriteEffects.None, 0);
+            spriteBatch.Draw(_texture, position, null, Color.White, angle, new Vector2(_texture.Width / 2, _texture.Height / 2), 1.5f, SpriteEffects.None, 0);
         }
     }
 }

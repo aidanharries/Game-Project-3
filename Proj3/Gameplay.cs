@@ -1,4 +1,15 @@
-﻿using Microsoft.Xna.Framework;
+﻿// ---------------------------------------------------------------------------
+// Proj3 - Gameplay Class
+// Author: Aidan Harries
+// Date: 10/13/23
+// Description: Manages and renders the main gameplay elements, including the
+// player's ship, asteroids, and the parallax background. It handles game 
+// element interactions such as collisions and their respective animations.
+// Fade transitions are also managed for smoother transitions into the 
+// gameplay screen.
+// ---------------------------------------------------------------------------
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -15,11 +26,11 @@ namespace Proj3
         private PlayerShip _playerShip;
         private Asteroid _asteroid;
 
-        private Game gameInstance;
-        private ContentManager contentManager;
+        private Game _gameInstance;
+        private ContentManager _contentManager;
 
-        private List<ParallaxBackground> starLayers;
-        private Texture2D starTexture;
+        private List<ParallaxBackground> _starLayers;
+        private Texture2D _starTexture;
 
         /// <summary>
         /// Initializes gameplay elements and loads necessary content.
@@ -28,8 +39,7 @@ namespace Proj3
         /// <param name="game">Reference to the main game instance.</param>
         public Gameplay(ContentManager content, Game game)
         {
-            //_background = content.Load<Texture2D>("background");
-            starTexture = content.Load<Texture2D>("star");
+            _starTexture = content.Load<Texture2D>("star");
 
             _playerShip = new PlayerShip(game);
             _playerShip.LoadContent(content);
@@ -37,14 +47,14 @@ namespace Proj3
             _asteroid = new Asteroid(game);
             _asteroid.LoadContent(content);
 
-            this.gameInstance = game;
-            this.contentManager = content;
+            this._gameInstance = game;
+            this._contentManager = content;
 
-            starLayers = new List<ParallaxBackground>
+            _starLayers = new List<ParallaxBackground>
             {
                 new ParallaxBackground(100, 0f, 1f, Proj3.ScreenWidth + 20, Proj3.ScreenHeight + 20),     // Backmost layer
                 new ParallaxBackground(150, 0.01f, 2f, Proj3.ScreenWidth + 20, Proj3.ScreenHeight + 20),
-                new ParallaxBackground(200, 0.02f, 4f, Proj3.ScreenWidth + 20, Proj3.ScreenHeight + 20),     // Frontmost layer
+                new ParallaxBackground(200, 0.03f, 4f, Proj3.ScreenWidth + 20, Proj3.ScreenHeight + 20),     // Frontmost layer
             };
         }
 
@@ -115,8 +125,8 @@ namespace Proj3
             // Reset the asteroid if marked for removal
             if (_asteroid.toBeRemoved)
             {
-                _asteroid = new Asteroid(gameInstance);
-                _asteroid.LoadContent(contentManager);
+                _asteroid = new Asteroid(_gameInstance);
+                _asteroid.LoadContent(_contentManager);
             }
         }
 
@@ -128,27 +138,32 @@ namespace Proj3
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             // Draw background and elements in the correct order
-            //spriteBatch.Draw(_background, new Rectangle(0, 0, Proj3.ScreenWidth, Proj3.ScreenHeight), Color.White);
             Vector2 playerMovementOffset = _playerShip.velocity;
 
             spriteBatch.End(); // End the spriteBatch from the Proj3 class
 
             // Draw star layers
-            foreach (var layer in starLayers)
+            foreach (var layer in _starLayers)
             {
                 Matrix transformMatrix = Matrix.CreateTranslation(new Vector3(playerMovementOffset * layer.Speed, 0));
                 spriteBatch.Begin(transformMatrix: transformMatrix);
-                layer.Draw(spriteBatch, starTexture, playerMovementOffset);
+                layer.Draw(spriteBatch, _starTexture, playerMovementOffset);
                 spriteBatch.End();
             }
 
-            spriteBatch.Begin(); // Re-start the spriteBatch from the Proj3 class
+            // Start the sprite batch with alpha blending enabled.
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
             if (_fadeAlpha > 0)
             {
                 Color fadeColor = new Color(0, 0, 0, _fadeAlpha);
-                spriteBatch.Draw(starTexture, new Rectangle(0, 0, Proj3.ScreenWidth, Proj3.ScreenHeight), fadeColor);
+                spriteBatch.Draw(_starTexture, new Rectangle(0, 0, Proj3.ScreenWidth, Proj3.ScreenHeight), fadeColor);
             }
+
+            // End the sprite batch.
+            spriteBatch.End();
+
+            spriteBatch.Begin(); // Re-start the spriteBatch from the Proj3 class
 
             _playerShip.Draw(gameTime, spriteBatch);
             _asteroid.Draw(spriteBatch);

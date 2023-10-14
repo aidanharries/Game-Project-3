@@ -1,4 +1,12 @@
-﻿using System;
+﻿// ---------------------------------------------------------------------------
+// Proj3 - PlayerShip Class
+// Author: Aidan Harries
+// Date: 10/13/23
+// Description: Represents the player's spaceship in the game. This class
+// handles the player ship's movement, rotation, firing lasers, and rendering.
+// ---------------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,7 +18,7 @@ namespace Proj3
 {
     public class PlayerShip
     {
-        // Constants for ship characteristics.
+        // Constants defining various characteristics of the player ship.
         const float SPEED = 700;
         const float ANGULAR_ACCELERATION = 15;
         const float LINEAR_DRAG = 0.97f;
@@ -18,20 +26,20 @@ namespace Proj3
         const float LASER_COOLDOWN = 0.33f;
         const float RED_TIME = 0.5f;
 
-        // Texture and position for rendering.
+        // Rendering properties of the ship.
         public Texture2D texture;
         public Vector2 position;
-
-        // Private instance variables.
-        private Game game;
         public Vector2 velocity;
-        private Vector2 direction;
-        private float angle;
-        private float angularVelocity;
-        private List<Laser> lasers;
-        private float timeSinceLastLaser = 0;
-        private float timeToBeRed = 0;
-        private SoundEffect shootingSound;
+
+        // Various private variables to handle the player ship's state.
+        private Game _game;
+        private Vector2 _direction;
+        private float _angle;
+        private float _angularVelocity;
+        private List<Laser> _lasers;
+        private float _timeSinceLastLaser = 0;
+        private float _timeToBeRed = 0;
+        private SoundEffect _shootingSound;
 
         /// <summary>
         /// Constructor for the PlayerShip class. Initializes the ship's properties.
@@ -39,11 +47,11 @@ namespace Proj3
         /// <param name="game">Reference to the main game object.</param>
         public PlayerShip(Game game)
         {
-            this.game = game;
+            this._game = game;
             position = new Vector2(375, 250);
-            direction = -Vector2.UnitY;
-            angularVelocity = 0;
-            lasers = new List<Laser>();
+            _direction = -Vector2.UnitY;
+            _angularVelocity = 0;
+            _lasers = new List<Laser>();
         }
 
         /// <summary>
@@ -53,7 +61,7 @@ namespace Proj3
         public void LoadContent(ContentManager content)
         {
             texture = content.Load<Texture2D>("ship");
-            shootingSound = content.Load<SoundEffect>("shoot");
+            _shootingSound = content.Load<SoundEffect>("shoot");
         }
 
         /// <summary>
@@ -73,21 +81,21 @@ namespace Proj3
             // Forward and backward movement for Keyboard
             if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W))
             {
-                acceleration += direction * SPEED;
+                acceleration += _direction * SPEED;
             }
             if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S))
             {
-                acceleration -= direction * SPEED;
+                acceleration -= _direction * SPEED;
             }
 
             // Forward and backward movement for Gamepad
             if (gamePadState.Triggers.Right > 0)
             {
-                acceleration += direction * SPEED * gamePadState.Triggers.Right;
+                acceleration += _direction * SPEED * gamePadState.Triggers.Right;
             }
             if (gamePadState.Triggers.Left > 0)
             {
-                acceleration -= direction * SPEED * gamePadState.Triggers.Left;
+                acceleration -= _direction * SPEED * gamePadState.Triggers.Left;
             }
 
             // Rotation
@@ -101,23 +109,23 @@ namespace Proj3
             }
 
             // Update the cooldown time
-            timeSinceLastLaser += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            _timeSinceLastLaser += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             // Firing a laser
-            if ((keyboardState.IsKeyDown(Keys.Space) || gamePadState.Buttons.A == ButtonState.Pressed) && timeSinceLastLaser > LASER_COOLDOWN)
+            if ((keyboardState.IsKeyDown(Keys.Space) || gamePadState.Buttons.A == ButtonState.Pressed) && _timeSinceLastLaser > LASER_COOLDOWN)
             {
-                Laser newLaser = new Laser(this.position, this.direction, this.angle);
-                newLaser.LoadContent(this.game.Content);
-                lasers.Add(newLaser);
-                timeSinceLastLaser = 0;
+                Laser newLaser = new Laser(this.position, this._direction, this._angle);
+                newLaser.LoadContent(this._game.Content);
+                _lasers.Add(newLaser);
+                _timeSinceLastLaser = 0;
 
-                shootingSound.Play(0.20f, 0.2f, 0.0f);
+                _shootingSound.Play(0.20f, 0.2f, 0.0f);
             }
 
             // Update lasers
             List<Laser> lasersToRemove = new List<Laser>();
-            var viewport = game.GraphicsDevice.Viewport;
-            foreach (var laser in lasers)
+            var viewport = _game.GraphicsDevice.Viewport;
+            foreach (var laser in _lasers)
             {
                 laser.Update(gameTime);
 
@@ -129,15 +137,15 @@ namespace Proj3
                 }
             }
 
-            if (timeToBeRed > 0)
+            if (_timeToBeRed > 0)
             {
-                timeToBeRed -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                _timeToBeRed -= (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
 
             // Remove lasers that are outside of viewport
             foreach (var laser in lasersToRemove)
             {
-                lasers.Remove(laser);
+                _lasers.Remove(laser);
             }
 
             // Update velocity and position based on acceleration
@@ -145,16 +153,16 @@ namespace Proj3
             position += velocity * t;
 
             // Update angular velocity and angle based on angular acceleration
-            angularVelocity += angularAcceleration * t;
-            angle += angularVelocity * t;
+            _angularVelocity += angularAcceleration * t;
+            _angle += _angularVelocity * t;
 
             // Update the direction vector based on the new angle
-            direction.X = (float)Math.Sin(angle);
-            direction.Y = -(float)Math.Cos(angle);
+            _direction.X = (float)Math.Sin(_angle);
+            _direction.Y = -(float)Math.Cos(_angle);
 
             // Apply drag to slow down the ship when no input is given
             velocity *= LINEAR_DRAG;
-            angularVelocity *= ANGULAR_DRAG;
+            _angularVelocity *= ANGULAR_DRAG;
 
             // Wrap the ship to keep it on-screen
             if (position.Y < 0) position.Y = viewport.Height;
@@ -170,11 +178,11 @@ namespace Proj3
         /// <param name="spriteBatch">Used to draw textures on the screen.</param>
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            Color color = timeToBeRed > 0 ? Color.Red : Color.White;
-            spriteBatch.Draw(texture, position, null, color, angle, new Vector2(texture.Width / 2, texture.Height / 2), 1.5f, SpriteEffects.None, 0);
+            Color color = _timeToBeRed > 0 ? Color.Red : Color.White;
+            spriteBatch.Draw(texture, position, null, color, _angle, new Vector2(texture.Width / 2, texture.Height / 2), 1.5f, SpriteEffects.None, 0);
 
             // Draw lasers
-            foreach (var laser in lasers)
+            foreach (var laser in _lasers)
             {
                 laser.Draw(gameTime, spriteBatch);
             }
@@ -186,7 +194,7 @@ namespace Proj3
         /// <returns>List of lasers.</returns>
         public List<Laser> GetLasers()
         {
-            return lasers;
+            return _lasers;
         }
 
         /// <summary>
@@ -195,7 +203,7 @@ namespace Proj3
         /// <param name="laser">The laser to remove.</param>
         public void RemoveLaser(Laser laser)
         {
-            lasers.Remove(laser);
+            _lasers.Remove(laser);
         }
 
         /// <summary>
@@ -203,7 +211,7 @@ namespace Proj3
         /// </summary>
         public void SetToBeRed()
         {
-            this.timeToBeRed = RED_TIME;
+            this._timeToBeRed = RED_TIME;
         }
     }
 }

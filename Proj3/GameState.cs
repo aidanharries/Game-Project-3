@@ -1,4 +1,11 @@
-﻿
+﻿// ---------------------------------------------------------------------------
+// Proj3 - GameState Enum
+// Author: Aidan Harries
+// Date: 10/13/23
+// Description: Enum defining possible states of the game, allowing easy transitions
+// between different game scenes.
+// ---------------------------------------------------------------------------
+
 namespace Proj3
 {
     /// <summary>

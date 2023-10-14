@@ -1,0 +1,20 @@
+﻿# ASSETS USED IN PROJECT 3
+
+## Images
+Content/asteroid.png - created by Aidan Harries using Aesprite
+Content/asteroid_explode.png - created by Aidan Harries using Aesprite
+Content/laser.png - created by Aidan Harries using Aesprite
+Content/ship.png - created by Aidan Harries using Aesprite
+Content/star.png - created by Aidan Harries using Aesprite
+
+## Audio
+Content/Explosion.wav - created by Aidan Harries using bfxr
+Content/Play.wav - created by Aidan Harries using bfxr
+Content/shoot.wav - created by Aidan Harries using bfxr
+Content/Retro_Platforming.mp3 - created by David Fesliyan under royalty free music
+	- Source: https://www.fesliyanstudios.com/royalty-free-music/download/retro-platforming/454
+
+## Fonts
+- Content/LanaPixel.ttf: LanaPixel font created by eishiya.
+  - License: Open Font License (OFL)
+  - Source: https://opengameart.org/content/lanapixel-localization-friendly-pixel-font

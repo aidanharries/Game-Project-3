@@ -1,4 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿// ---------------------------------------------------------------------------
+// Proj3 - MainMenu Class
+// Author: Aidan Harries
+// Date: 10/13/23
+// Description: Represents the main menu of the game. This class handles the 
+// user interaction in the main menu, including animations, fade transitions,
+// and input handling for starting the game.
+// ---------------------------------------------------------------------------
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -11,7 +20,6 @@ namespace Proj3
     public class MainMenu
     {
         // Textures and fonts
-        private Texture2D _background;
         private SpriteFont _font;
         private SpriteFont _largeFont;
 
@@ -152,6 +160,10 @@ namespace Proj3
             Color promptColor = _enterPressed ? Color.Gold : Color.White;
             spriteBatch.DrawString(_font, _promptText, _promptPosition, promptColor);
 
+            spriteBatch.End();  // end proj3 spritebatch
+            // Start the sprite batch with alpha blending enabled.
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+
             // If Enter was pressed, draw fading effect.
             if (_enterPressed)
             {
@@ -160,7 +172,9 @@ namespace Proj3
                 spriteBatch.Draw(_fadeTexture, new Rectangle(0, 0, Proj3.ScreenWidth, Proj3.ScreenHeight), fadeColor);
             }
 
-
+            // End the sprite batch.
+            spriteBatch.End();
+            spriteBatch.Begin(); // restart proj3 spritebatch
         }
     }
 }
